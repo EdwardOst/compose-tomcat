@@ -1,0 +1,31 @@
+name: tomcat
+
+services:
+
+  tomcat_server:
+    image: ${TOMCAT_IMAGE}:${TOMCAT_VERSION}
+    restart: always
+#   no environment settings
+#   environment:
+    expose:
+      # The tomcat port is exposed to other linked services within the docker network
+      - ${TOMCAT_CONTAINER_PORT}
+    ports:
+      # The tomcat port exposed on the host is mapped to ip 127.0.0.1 so it should only be visible to the host and not other host network systems.
+      # If the host port is not specified or the empty string a port will be dynamically assigned.
+      - target: ${TOMCAT_CONTAINER_PORT}
+        published: ${TOMCAT_HOST_PORT}
+        host_ip: ${TOMCAT_HOST_IP}
+        protocol: tcp
+        mode: host
+    volumes:
+      - tomcat-conf:/usr/local/tomcat/conf
+    labels:
+      com.qlik.presales.description: "tomcat"
+      com.qlik.presales.author: "ed.ost@qlik.com"
+      com.qlik.presales.source: "https://hub.docker.com/_/tomcat"
+
+volumes:
+  tomcat-conf:
+    labels:
+      com.qlik.presales.description: "tomcat configuration"
